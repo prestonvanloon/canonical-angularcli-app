@@ -1,14 +1,20 @@
 http_archive(
     name = "build_bazel_rules_nodejs",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/archive/0.12.2.zip"],
-    strip_prefix = "rules_nodejs-0.12.2",
-    sha256 = "b691443ee5877214bfce3b006204528ef92ee57c2c5d21aec6a757bc6f58a7b8",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/archive/0.15.0.zip"],
+    strip_prefix = "rules_nodejs-0.15.0",
+    #sha256 = "b691443ee5877214bfce3b006204528ef92ee57c2c5d21aec6a757bc6f58a7b8",
 )
 
 # Runs the TypeScript compiler
-local_repository(
+#local_repository(
+#    name = "build_bazel_rules_typescript",
+#    path = "node_modules/@bazel/typescript",
+#)
+
+http_archive(
     name = "build_bazel_rules_typescript",
-    path = "node_modules/@bazel/typescript",
+    url = "https://github.com/bazelbuild/rules_typescript/archive/0.20.2.zip",
+    strip_prefix = "rules_typescript-0.20.2",
 )
 
 load("@build_bazel_rules_typescript//:package.bzl", "rules_typescript_dependencies")
@@ -25,15 +31,22 @@ http_archive(
 # The @angular repo contains rule for building Angular applications
 http_archive(
     name = "angular",
-    url = "https://github.com/angular/angular/archive/6.1.7.zip",
-    strip_prefix = "angular-6.1.7",
-    sha256 = "bd6bd47b8b65254da78158b354c4b0ffc18b9591bcc82863e359fc8d3e1cc609",
+    url = "https://github.com/angular/angular/archive/6.1.9.zip",
+    strip_prefix = "angular-6.1.9",
+#    sha256 = "bd6bd47b8b65254da78158b354c4b0ffc18b9591bcc82863e359fc8d3e1cc609",
 )
 
 # The @rxjs repo contains targets for building rxjs with bazel
-local_repository(
+#local_repository(
+#    name = "rxjs",
+#    path = "node_modules/rxjs/src",
+#)
+
+# rxjs (needed by Angular, but isnt provide by them for some reason)
+http_archive(
     name = "rxjs",
-    path = "node_modules/rxjs/src",
+    url = "https://github.com/ReactiveX/rxjs/archive/6.3.3.zip",
+    strip_prefix = "rxjs-6.3.3/src",
 )
 
 ####################################
@@ -41,9 +54,12 @@ local_repository(
 
 load("@build_bazel_rules_nodejs//:defs.bzl", "node_repositories", "yarn_install")
 
-node_repositories(
-    package_json = ["//:package.json"],
-    preserve_symlinks = True,
+node_repositories()
+
+yarn_install(
+    name = "npm",
+    package_json = "//:package.json",
+    yarn_lock = "//:yarn.lock",
 )
 
 load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains")
